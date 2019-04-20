@@ -2,11 +2,11 @@
 
 This simple utility compares 1 or more MySQL schemas (databases) and pinpoints schema and data differences. This tool does not create any remediation SQL statement.
 
-It was developed to compare MySQL replicas, either within a MySQL InnoDB cluster, or with an offsite DR replica.
+It was developed to compare MySQL replicas, in particular for a MySQL InnoDB cluster (3 or more nodes), and possibly with an offsite DR replica.
 
 ## Algorithm
 
-The tool compares md5 of the row, simply speaking `select concat(pk1, pk2), md5(concat(pk1, pk2, coalesce(c1, '?'), coalesce(c2, '?'), ...)) from table order by pk1, pk2`. If some primary keys are missing on either master or slave database, or md5 value is not matching, the tool reports the difference, showing the primary keys.
+The tool compares md5 of the row, simply speaking `select concat(pk1, pk2) PK, md5(concat(pk1, pk2, coalesce(c1, 'null'), coalesce(c2, 'null'), ...)) MD5 from mytable order by pk1, pk2`. If some primary keys are missing on either master or slave database, or md5 value is not matching, the tool reports the difference, showing the primary keys.
 
 The tool being optimized for tables very similar in content, it retrieves 1 row alternatively from master then slave table. As data is sorted by PK, it keeps a sorted list of differences (pk and md5 value) in memory. As soon as there is a match, any value lower than the match pair is immediately reported and removed from memory. Memory footprint shall then remain small.
 
