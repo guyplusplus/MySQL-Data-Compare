@@ -5,8 +5,8 @@
 	<groupId>com.geckotechnology.mySqlDataCompare</groupId>
 	<artifactId>MySQLDataCompare</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0-SNAPSHOT</version>
-	<name>MYSQLDataCompare</name>
+	<version>1.0</version>
+	<name>MySQLDataCompare</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
