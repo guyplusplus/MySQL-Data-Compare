@@ -53,7 +53,7 @@ public class SchemaDifference {
 	}
 	
 	public void printDetails() {
-		System.out.print("DIFF criticality:" + criticality + ", objectName:" + objectName + ", differenceType:" + differenceType);
+		System.out.print("    " + criticality + " object:" + objectName + ", differenceType:" + differenceType);
 		if(note != null && note.length() > 0)
 			System.out.println(", note:" + note);
 		else
