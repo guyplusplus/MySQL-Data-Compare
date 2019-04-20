@@ -6,6 +6,8 @@ public class OneRow {
 	private String md5;
 	
 	public OneRow(String pk, String md5) {
+		if(pk == null)
+			throw new NullPointerException("Primary key can not be null");
 		this.pk = pk;
 		this.md5 = md5;
 	}
