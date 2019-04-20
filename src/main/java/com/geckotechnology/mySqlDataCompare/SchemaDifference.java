@@ -30,12 +30,8 @@ public class SchemaDifference {
 	private String note;
 	
 	public SchemaDifference(Criticality criticality, String objectName, DifferenceType differenceType, String note) {
-		this.criticality = criticality;
-		this.objectName = objectName;
-		this.differenceType = differenceType;
+		this(criticality, objectName, differenceType);
 		this.note = note;
-		if(objectName == null)
-			throw new NullPointerException("differenceType can not be null");
 		if(note == null || note.length() == 0)
 			throw new NullPointerException("note can not be null or empty");
 	}
