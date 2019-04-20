@@ -158,7 +158,7 @@ public class MySQLSchemaComparer {
 				else if(masterColumn.isPrimaryKey() &&
 						masterColumn.getPrimaryKeyOrdinalPosition() != slaveColumn.getPrimaryKeyOrdinalPosition()) {
 					schemaDifferences.add(new SchemaDifference(
-							SchemaDifference.Criticality.ERROR,
+							SchemaDifference.Criticality.WARNING,
 							slaveTable.getTableName() + "." + slaveColumn.getColumnName(),
 							SchemaDifference.DifferenceType.COLUMN_DIFFERENT_PRIMARY_KEY_ORDINAL_POSITION,
 							"master:" + masterColumn.getPrimaryKeyOrdinalPosition() + " v.s. slave:" + slaveColumn.getPrimaryKeyOrdinalPosition()));
@@ -169,7 +169,7 @@ public class MySQLSchemaComparer {
 		}
 	}
 	
-	public ArrayList<Table> getTablesReadyToBeDataAnalyzed() {
+	public ArrayList<Table> getMasterTablesReadyToBeDataAnalyzed() {
 		ArrayList<Table> tables = new ArrayList<Table>();
 		for(Table masterTable:masterSchema.getTablesSortedByTableName()) {
 			if(masterTable.isReadyToBeDataAnalyzed()) {

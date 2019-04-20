@@ -65,8 +65,8 @@ public class AppTest extends TestCase
 		assertTrue(schemaDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "pkdiff2.sometext", DifferenceType.COLUMN_DIFFERENT_PRIMARY_KEY, "master:false v.s. slave:true")) >= 0);
 		assertTrue(schemaDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "pkdiff3.sometext1", DifferenceType.COLUMN_DIFFERENT_PRIMARY_KEY, "master:true v.s. slave:false")) >= 0);
 		assertTrue(schemaDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "pkdiff3.sometext2", DifferenceType.COLUMN_DIFFERENT_PRIMARY_KEY, "master:false v.s. slave:true")) >= 0);
-		assertTrue(schemaDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "pkdiff4.sometext1", DifferenceType.COLUMN_DIFFERENT_PRIMARY_KEY_ORDINAL_POSITION, "master:2 v.s. slave:1")) >= 0);
-		assertTrue(schemaDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "pkdiff4.uid", DifferenceType.COLUMN_DIFFERENT_PRIMARY_KEY_ORDINAL_POSITION, "master:1 v.s. slave:2")) >= 0);
+		assertTrue(schemaDifferences.indexOf(new SchemaDifference(Criticality.WARNING, "pkdiff4.sometext1", DifferenceType.COLUMN_DIFFERENT_PRIMARY_KEY_ORDINAL_POSITION, "master:2 v.s. slave:1")) >= 0);
+		assertTrue(schemaDifferences.indexOf(new SchemaDifference(Criticality.WARNING, "pkdiff4.uid", DifferenceType.COLUMN_DIFFERENT_PRIMARY_KEY_ORDINAL_POSITION, "master:1 v.s. slave:2")) >= 0);
 		assertTrue(schemaDifferences.indexOf(new SchemaDifference(Criticality.WARNING, "tab1.sometext", DifferenceType.COLUMN_DIFFERENT_TYPE, "master:varchar(100) v.s. slave:varchar(99)")) >= 0);
 		assertTrue(schemaDifferences.indexOf(new SchemaDifference(Criticality.WARNING, "tab3.sometext2", DifferenceType.COLUMN_DIFFERENT_ORDINAL_POSITION, "master:3 v.s. slave:1")) >= 0);
 		assertTrue(schemaDifferences.indexOf(new SchemaDifference(Criticality.WARNING, "tab3.uid", DifferenceType.COLUMN_DIFFERENT_ORDINAL_POSITION, "master:1 v.s. slave:3")) >= 0);
@@ -83,7 +83,7 @@ public class AppTest extends TestCase
 		assertTrue(schemaDifferences.indexOf(new SchemaDifference(Criticality.WARNING, "pkdiff3.sometext2", DifferenceType.COLUMN_DIFFERENT_IS_NULLABLE, "master:true v.s. slave:false")) >= 0);
 		assertTrue(schemaDifferences.size() == 27);
         
-		ArrayList<Table> tablesReadyToBeDataAnalyzed = mySQLSchemaComparer.getTablesReadyToBeDataAnalyzed();
+		ArrayList<Table> tablesReadyToBeDataAnalyzed = mySQLSchemaComparer.getMasterTablesReadyToBeDataAnalyzed();
 		MySQLTableDataComparer tableDataComparer = new MySQLTableDataComparer(masterSchemaReader, slaveSchemaReader);
 		for(Table table:tablesReadyToBeDataAnalyzed)
 			tableDataComparer.compareTable(table);
