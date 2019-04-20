@@ -38,6 +38,7 @@ public class App
 		for(int i = 1; i<args.length; i++) {
 			MySQLSchemaRetriever slaveSchemaReader = null;
 			Schema slaveSchema = null;
+			long startTime = System.currentTimeMillis();
 			try {
 				System.out.println("Loading Database Schema Metadata Slave #" + i);
 				slaveSchemaReader = new MySQLSchemaRetriever(args[i]);
@@ -50,7 +51,16 @@ public class App
 				//mySQLSchemaComparer.printTablesForDataAnalysis();
 				warningCount += mySQLSchemaComparer.calculateCriticalityCount(SchemaDifference.Criticality.WARNING);
 				errorCount += mySQLSchemaComparer.calculateCriticalityCount(SchemaDifference.Criticality.ERROR);
-				ArrayList<Table> tablesReadyToBeDataAnalyzed = mySQLSchemaComparer.getTablesReadyToBeDataAnalyzed();
+				System.out.println("Comparing Database Schema Data MASTER with Slave #" + i);
+				ArrayList<Table> tablesReadyToBeDataAnalyzed = mySQLSchemaComparer.getMasterTablesReadyToBeDataAnalyzed();
+				//printing table names to be analyzed
+				System.out.print("In scope tables: ");
+				for(Table table:tablesReadyToBeDataAnalyzed) {
+					System.out.print(table.getTableName());		
+					System.out.print(" ");
+				}
+				System.out.println();
+				//start comparison
 				MySQLTableDataComparer tableDataComparer = new MySQLTableDataComparer(masterSchemaReader, slaveSchemaReader);
 				for(Table table:tablesReadyToBeDataAnalyzed)
 					tableDataComparer.compareTable(table);
@@ -66,7 +76,8 @@ public class App
 			finally {
 				if(slaveSchemaReader != null)
 					slaveSchemaReader.closeConnection();	
-				System.out.println("Comparing Database Schema Metadata MASTER with Slave #" + i + " - Complete");
+				long endTime = System.currentTimeMillis();
+				System.out.println("Comparing Database Schema MASTER with Slave #" + i + " - Complete. Duration (ms): " + (endTime - startTime));
 			}
 		}
 		
