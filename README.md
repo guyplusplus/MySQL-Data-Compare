@@ -1,4 +1,4 @@
-# MYSQLDataCompare
+# MySQL Data Compare
 
 This simple utility compares 1 or more MySQL schemas (databases) and pinpoints schema and data differences. This tool does not create any remediation SQL statement.
 
