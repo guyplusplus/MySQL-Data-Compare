@@ -77,7 +77,7 @@ public class Table {
 	 * 
 	 * @return for example (id), or (col1, col2)
 	 */
-	public StringBuilder createPKTupple() {
+	public StringBuilder createPKColumnsTuple() {
 		return buildSequence(primaryKey.getColumnsSortedByPrimaryKeyOrdinalPosition(),
 				"(", ")",
 				"", "",

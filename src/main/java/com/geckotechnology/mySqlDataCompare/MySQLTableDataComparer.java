@@ -19,8 +19,9 @@ public class MySQLTableDataComparer {
 	}
 	
 	public void compareTable(Table table) throws Exception {
+		//note that only 1 SQL statement is used for both tables, even if column or PK columns are not in the same order
 		StringBuilder selectSQL = table.createSQLToGetAllRows();
-		String pkTupple = table.createPKTupple().toString();
+		String pkColumnsTuple = table.createPKColumnsTuple().toString();
 		Statement masterStatement = masterSchemaReader.getStatement();
 		ResultSet masterResultSet = masterStatement.executeQuery(selectSQL.toString());
 		Statement slaveStatement = slaveSchemaReader.getStatement();
@@ -43,7 +44,7 @@ public class MySQLTableDataComparer {
 						dataDifferences.add(new SchemaDifference(Criticality.ERROR,
 								table.getTableName(),
 								DifferenceType.DATA_ROW_DIFFERENT_MD5,
-								pkTupple + "=("+ masterOneRow.getPk() + ")"));
+								pkColumnsTuple + "=("+ masterOneRow.getPk() + ")"));
 					}
 					slaveRows.remove(slaveRowIndex);
 					if(slaveRowIndex != 0) {
@@ -52,8 +53,8 @@ public class MySQLTableDataComparer {
 							OneRow removedSlaveOneRaw = slaveRows.remove(0);
 							dataDifferences.add(new SchemaDifference(Criticality.ERROR,
 									table.getTableName(),
-									DifferenceType.DATA_ROW_IN_EXCESS,
-									pkTupple + "=("+ removedSlaveOneRaw.getPk() + ")"));
+									DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE,
+									pkColumnsTuple + "=("+ removedSlaveOneRaw.getPk() + ")"));
 						}
 					}
 				}
@@ -77,7 +78,7 @@ public class MySQLTableDataComparer {
 						dataDifferences.add(new SchemaDifference(Criticality.ERROR,
 								table.getTableName(),
 								DifferenceType.DATA_ROW_DIFFERENT_MD5,
-								pkTupple + "=("+ masterOneRow.getPk() + ")"));
+								pkColumnsTuple + "=("+ masterOneRow.getPk() + ")"));
 					}
 					masterRows.remove(masterRowIndex);
 					if(masterRowIndex != 0) {
@@ -86,8 +87,8 @@ public class MySQLTableDataComparer {
 							OneRow removedMasterOneRaw = masterRows.remove(0);
 							dataDifferences.add(new SchemaDifference(Criticality.ERROR,
 									table.getTableName(),
-									DifferenceType.DATA_MISSING_ROW,
-									pkTupple + "=("+ removedMasterOneRaw.getPk() + ")"));
+									DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE,
+									pkColumnsTuple + "=("+ removedMasterOneRaw.getPk() + ")"));
 						}
 					}
 				}
@@ -101,17 +102,19 @@ public class MySQLTableDataComparer {
 
 		}
 	
+		//rows not found in slave table
 		for(OneRow masterOneRow:masterRows) {
 			dataDifferences.add(new SchemaDifference(Criticality.ERROR,
 					table.getTableName(),
-					DifferenceType.DATA_MISSING_ROW,
-					pkTupple + "=("+ masterOneRow.getPk() + ")"));			
+					DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE,
+					pkColumnsTuple + "=("+ masterOneRow.getPk() + ")"));			
 		}
+		//rows not found in master table
 		for(OneRow slaveOneRow:slaveRows) {
 			dataDifferences.add(new SchemaDifference(Criticality.ERROR,
 					table.getTableName(),
-					DifferenceType.DATA_ROW_IN_EXCESS,
-					pkTupple + "=("+ slaveOneRow.getPk() + ")"));			
+					DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE,
+					pkColumnsTuple + "=("+ slaveOneRow.getPk() + ")"));			
 		}
 		slaveResultSet.close();
 		slaveStatement.close();

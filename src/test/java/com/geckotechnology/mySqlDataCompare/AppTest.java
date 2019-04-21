@@ -89,16 +89,16 @@ public class AppTest extends TestCase
 			tableDataComparer.compareTable(table);
 		ArrayList<SchemaDifference> dataDifferences = tableDataComparer.getDataDifferences();
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab1", DifferenceType.DATA_ROW_DIFFERENT_MD5, "(uid)=(3)")) >= 0);
-		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab1", DifferenceType.DATA_MISSING_ROW, "(uid)=(5)")) >= 0);
+		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab1", DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE, "(uid)=(5)")) >= 0);
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab1", DifferenceType.DATA_ROW_DIFFERENT_MD5, "(uid)=(7)")) >= 0);
-		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab1", DifferenceType.DATA_ROW_IN_EXCESS, "(uid)=(2)")) >= 0);
-		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab2", DifferenceType.DATA_MISSING_ROW, "(uid)=(5)")) >= 0);
-		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab2", DifferenceType.DATA_ROW_IN_EXCESS, "(uid)=(2)")) >= 0);
+		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab1", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid)=(2)")) >= 0);
+		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab2", DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE, "(uid)=(5)")) >= 0);
+		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab2", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid)=(2)")) >= 0);
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_DIFFERENT_MD5, "(uid,sometext2)=(3,c2)")) >= 0);
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_DIFFERENT_MD5, "(uid,sometext2)=(5,d2)")) >= 0);
-		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_MISSING_ROW, "(uid,sometext2)=(4,d2)")) >= 0);
-		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_IN_EXCESS, "(uid,sometext2)=(4,d3)")) >= 0);
-		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_IN_EXCESS, "(uid,sometext2)=(6,e2)")) >= 0);
+		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE, "(uid,sometext2)=(4,d2)")) >= 0);
+		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid,sometext2)=(4,d3)")) >= 0);
+		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid,sometext2)=(6,e2)")) >= 0);
         assertTrue(dataDifferences.size() == 11);
     }
 }
