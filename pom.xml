@@ -35,7 +35,7 @@
 	</dependencies>
 	
 	<build>
-		<finalName>MySQLDataCompare</finalName>
+		<finalName>${project.name}-${project.version}</finalName>
 		
 		<plugins>
 			<!-- download source code in Eclipse, best practice -->
