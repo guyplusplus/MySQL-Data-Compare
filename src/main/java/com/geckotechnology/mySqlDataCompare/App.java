@@ -77,7 +77,7 @@ public class App
 				if(slaveSchemaReader != null)
 					slaveSchemaReader.closeConnection();	
 				long endTime = System.currentTimeMillis();
-				System.out.println("Comparing Database Schema MASTER with Slave #" + i + " - Complete. Duration (ms): " + (endTime - startTime));
+				System.out.println("Comparing Database Schema MASTER with Slave #" + i + " - Complete. Duration(ms): " + (endTime - startTime));
 			}
 		}
 		
