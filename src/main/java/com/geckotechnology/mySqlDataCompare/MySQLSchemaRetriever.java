@@ -7,7 +7,7 @@ import java.sql.Statement;
 
 public class MySQLSchemaRetriever {
 	
-	private static final int FETCH_SIZE = 1024;
+	private static final int SELECT_FETCH_SIZE = 1024;
 	private static final String SQL_SELECT_SCHEMA = "select schema()";
 	private static final String SQL_SELECT_ALL_TABLES = "select columns.table_name, columns.column_name, columns.column_type, columns.ordinal_position, columns.column_key, columns.is_nullable from information_schema.columns, information_schema.tables where tables.table_schema=schema() and columns.table_name = tables.table_name and columns.table_schema = tables.table_schema and tables.table_type='BASE TABLE' order by columns.table_name, columns.column_name";
 	private static final String SQL_SELECT_ALL_PKS = "select key_column_usage.table_name, key_column_usage.column_name, key_column_usage.ordinal_position from information_schema.key_column_usage where key_column_usage.table_schema=schema() and key_column_usage.constraint_name = 'PRIMARY' order by key_column_usage.table_name, key_column_usage.ordinal_position";
@@ -31,12 +31,12 @@ public class MySQLSchemaRetriever {
 		}
 	}
 	
-	public Statement getStatement() throws Exception {
+	public Statement createStatement() throws Exception {
 		Statement stmt = conn.createStatement(
 	    		ResultSet.TYPE_FORWARD_ONLY,
 	    	    ResultSet.CONCUR_READ_ONLY,
 	    	    ResultSet.CLOSE_CURSORS_AT_COMMIT);
-	    stmt.setFetchSize(FETCH_SIZE);
+	    stmt.setFetchSize(SELECT_FETCH_SIZE);
 	    return stmt;
 	}
 	
@@ -48,11 +48,7 @@ public class MySQLSchemaRetriever {
 		ResultSet rs = null;
 	    //-----------------------------------------------------------
 		//check that current schema is not null
-	    stmt = conn.createStatement(
-	    		ResultSet.TYPE_FORWARD_ONLY,
-	    	    ResultSet.CONCUR_READ_ONLY,
-	    	    ResultSet.CLOSE_CURSORS_AT_COMMIT);
-	    stmt.setFetchSize(FETCH_SIZE);
+	    stmt = createStatement();
 	    rs = stmt.executeQuery(SQL_SELECT_SCHEMA);
 	    while(rs.next()) {
 	    	schema.setSchemaName(rs.getString(1));
@@ -65,11 +61,7 @@ public class MySQLSchemaRetriever {
 	    stmt.close();
 	    //-----------------------------------------------------------
 		//get all tables
-	    stmt = conn.createStatement(
-	    		ResultSet.TYPE_FORWARD_ONLY,
-	    	    ResultSet.CONCUR_READ_ONLY,
-	    	    ResultSet.CLOSE_CURSORS_AT_COMMIT);
-	    stmt.setFetchSize(FETCH_SIZE);
+	    stmt = createStatement();
 	    rs = stmt.executeQuery(SQL_SELECT_ALL_TABLES);
 	    String currentTableName = null;
 	    Table currentTable = null;
@@ -96,11 +88,7 @@ public class MySQLSchemaRetriever {
 	    stmt.close();
 	    //-----------------------------------------------------------
 		//get all PKs
-	    stmt = conn.createStatement(
-	    		ResultSet.TYPE_FORWARD_ONLY,
-	    	    ResultSet.CONCUR_READ_ONLY,
-	    	    ResultSet.CLOSE_CURSORS_AT_COMMIT);
-	    stmt.setFetchSize(FETCH_SIZE);
+	    stmt = createStatement();
 	    rs = stmt.executeQuery(SQL_SELECT_ALL_PKS);
 	    currentTable = null;
 	    while(rs.next()) {

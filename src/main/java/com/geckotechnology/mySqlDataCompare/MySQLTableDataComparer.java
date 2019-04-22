@@ -22,9 +22,9 @@ public class MySQLTableDataComparer {
 		//note that only 1 SQL statement is used for both tables, even if column or PK columns are not in the same order
 		StringBuilder selectSQL = table.createSQLToGetAllRows();
 		String pkColumnsTuple = table.createPKColumnsTuple().toString();
-		Statement masterStatement = masterSchemaReader.getStatement();
+		Statement masterStatement = masterSchemaReader.createStatement();
 		ResultSet masterResultSet = masterStatement.executeQuery(selectSQL.toString());
-		Statement slaveStatement = slaveSchemaReader.getStatement();
+		Statement slaveStatement = slaveSchemaReader.createStatement();
 		ResultSet slaveResultSet = slaveStatement.executeQuery(selectSQL.toString());
 		ArrayList<OneRow> masterRows = new ArrayList<OneRow>();
 		ArrayList<OneRow> slaveRows = new ArrayList<OneRow>();
