@@ -12,12 +12,22 @@ public class MySQLTableDataComparer {
 	private ArrayList<SchemaDifference> dataDifferences = new ArrayList<SchemaDifference>();
 	private MySQLSchemaRetriever masterSchemaReader;
 	private MySQLSchemaRetriever slaveSchemaReader;
+	private int masterTotalRetrievedRows;
+	private int slaveTotalRetrievedRows;
 	
 	public MySQLTableDataComparer(MySQLSchemaRetriever masterSchemaReader, MySQLSchemaRetriever slaveSchemaReader) {
 		this.masterSchemaReader = masterSchemaReader;
 		this.slaveSchemaReader = slaveSchemaReader;
 	}
 	
+	public int getMasterTotalRetrievedRows() {
+		return masterTotalRetrievedRows;
+	}
+
+	public int getSlaveTotalRetrievedRows() {
+		return slaveTotalRetrievedRows;
+	}
+
 	public void compareTable(Table table) throws Exception {
 		//note that only 1 SQL statement is used for both tables, even if column or PK columns are not in the same order
 		StringBuilder selectSQL = table.createSQLToGetAllRows();
@@ -35,6 +45,7 @@ public class MySQLTableDataComparer {
 			//Get 1 row from master DB
 			if(hasMasterResultSetNext && masterResultSet.next()) {
 				OneRow masterOneRow = new OneRow(masterResultSet.getString(1), masterResultSet.getString(2));
+				masterTotalRetrievedRows++;
 				int slaveRowIndex = slaveRows.indexOf(masterOneRow);
 				if(slaveRowIndex != -1) {
 					//slave row matching PK has been found
@@ -69,6 +80,7 @@ public class MySQLTableDataComparer {
 			//Get 1 row from slave DB
 			if(hasSlaveResultSetNext && slaveResultSet.next()) {
 				OneRow slaveOneRow = new OneRow(slaveResultSet.getString(1), slaveResultSet.getString(2));
+				slaveTotalRetrievedRows++;
 				int masterRowIndex = masterRows.indexOf(slaveOneRow);
 				if(masterRowIndex != -1) {
 					//slave row matching PK has been found

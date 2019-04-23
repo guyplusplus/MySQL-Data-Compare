@@ -38,8 +38,10 @@ public class App
 		for(int i = 1; i<args.length; i++) {
 			MySQLSchemaRetriever slaveSchemaReader = null;
 			Schema slaveSchema = null;
+			MySQLTableDataComparer tableDataComparer = null;
 			long startTime = System.currentTimeMillis();
 			try {
+				System.out.println();
 				System.out.println("Loading Database Schema Metadata Slave #" + i);
 				slaveSchemaReader = new MySQLSchemaRetriever(args[i]);
 				slaveSchemaReader.openConnection();
@@ -61,7 +63,7 @@ public class App
 				}
 				System.out.println();
 				//start comparison
-				MySQLTableDataComparer tableDataComparer = new MySQLTableDataComparer(masterSchemaReader, slaveSchemaReader);
+				tableDataComparer = new MySQLTableDataComparer(masterSchemaReader, slaveSchemaReader);
 				for(Table table:tablesReadyToBeDataAnalyzed)
 					tableDataComparer.compareTable(table);
 				tableDataComparer.printDataDifferenceDetails();
@@ -77,7 +79,12 @@ public class App
 				if(slaveSchemaReader != null)
 					slaveSchemaReader.closeConnection();	
 				long endTime = System.currentTimeMillis();
-				System.out.println("Comparing Database Schema MASTER with Slave #" + i + " - Complete. Duration(ms): " + (endTime - startTime));
+				System.out.println("Comparing Database Schema MASTER with Slave #" + i + " complete");
+				System.out.print("Duration(ms): " + (endTime - startTime));
+				if(tableDataComparer != null)
+					System.out.print(". Total rows retrieved from master: " + tableDataComparer.getMasterTotalRetrievedRows() +
+							", slave: " + tableDataComparer.getSlaveTotalRetrievedRows());
+				System.out.println();
 			}
 		}
 		
@@ -89,6 +96,7 @@ public class App
 			
 		}
 		
+		System.out.println();
 		System.out.println("Job Done. Count Summary warningCount:" + warningCount + ", errorCount:" + errorCount);
 		if(errorCount>0)
 			System.exit(1);

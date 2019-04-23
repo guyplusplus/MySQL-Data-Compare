@@ -6,6 +6,8 @@ It was developed to compare MySQL replicas, in particular for a MySQL InnoDB clu
 
 ## Algorithm
 
+The tool first retrieves schema information and ensures that tables can be compared. Two tables can be compared when they carry the same columns and the same primary keys. The tool issues warning when columns or primary keys are different type or different ordinal position.
+
 The tool compares md5 of the row, simply speaking `select concat(pk1, pk2) PK, md5(concat(pk1, pk2, coalesce(c1, 'null'), coalesce(c2, 'null'), ...)) MD5 from mytable order by pk1, pk2`. If some primary keys are missing on either master or slave database, or md5 value is not matching, the tool reports the difference, showing the primary keys.
 
 The tool being optimized for tables very similar in content, it retrieves 1 row alternatively from master then slave table. As data is sorted by PK, it keeps a sorted list of differences (pk and md5 value) in memory. As soon as there is a match, any value lower than the match pair is immediately reported and removed from memory. Memory footprint shall then remain small.
@@ -26,6 +28,7 @@ Here is a sample output from the test cases.
 
 ```
 Loading Database Schema Metadata MASTER
+
 Loading Database Schema Metadata Slave #1
 Comparing Database Schema Metadata MASTER with Slave #1
     ERROR object:onlyina, differenceType:TABLE_MISSING_IN_SLAVE_SCHEMA
@@ -68,6 +71,8 @@ In scope tables: tab1 tab2 tab3 tab5
     ERROR object:tab3, differenceType:DATA_ROW_MISSING_IN_SLAVE_TABLE, note:(uid,sometext2)=(4,d2)
     ERROR object:tab3, differenceType:DATA_ROW_EXCESS_IN_SLAVE_TABLE, note:(uid,sometext2)=(4,d3)
     ERROR object:tab3, differenceType:DATA_ROW_EXCESS_IN_SLAVE_TABLE, note:(uid,sometext2)=(6,e2)
-Comparing Database Schema MASTER with Slave #1 - Complete. Duration(ms): 56
+Comparing Database Schema MASTER with Slave #1 complete
+Duration(ms): 53. Total rows retrieved from master: 19, slave: 20
+
 Job Done. Count Summary warningCount:14, errorCount:24
 ```
