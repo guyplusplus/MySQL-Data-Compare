@@ -81,7 +81,7 @@ public class AppTest extends TestCase
 		assertTrue(schemaDifferences.indexOf(new SchemaDifference(Criticality.WARNING, "pkdiff2.sometext", DifferenceType.COLUMN_DIFFERENT_IS_NULLABLE, "master:true v.s. slave:false")) >= 0);
 		assertTrue(schemaDifferences.indexOf(new SchemaDifference(Criticality.WARNING, "pkdiff3.sometext1", DifferenceType.COLUMN_DIFFERENT_IS_NULLABLE, "master:false v.s. slave:true")) >= 0);
 		assertTrue(schemaDifferences.indexOf(new SchemaDifference(Criticality.WARNING, "pkdiff3.sometext2", DifferenceType.COLUMN_DIFFERENT_IS_NULLABLE, "master:true v.s. slave:false")) >= 0);
-		assertTrue(schemaDifferences.size() == 27);
+		assertEquals(schemaDifferences.size(), 27);
         
 		ArrayList<Table> tablesReadyToBeDataAnalyzed = mySQLSchemaComparer.getMasterTablesReadyToBeDataAnalyzed();
 		MySQLTableDataComparer tableDataComparer = new MySQLTableDataComparer(masterSchemaReader, slaveSchemaReader);
@@ -99,8 +99,8 @@ public class AppTest extends TestCase
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE, "(uid,sometext2)=(4,d2)")) >= 0);
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid,sometext2)=(4,d3)")) >= 0);
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid,sometext2)=(6,e2)")) >= 0);
-        assertTrue(dataDifferences.size() == 11);
-        assertTrue(tableDataComparer.getMasterTotalRetrievedRows() == 19);
-        assertTrue(tableDataComparer.getSlaveTotalRetrievedRows() == 20);
+		assertEquals(dataDifferences.size(), 11);
+        assertEquals(tableDataComparer.getMasterTotalRetrievedRows(), 19);
+        assertEquals(tableDataComparer.getSlaveTotalRetrievedRows(), 20);
     }
 }
