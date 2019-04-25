@@ -100,5 +100,7 @@ public class AppTest extends TestCase
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid,sometext2)=(4,d3)")) >= 0);
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid,sometext2)=(6,e2)")) >= 0);
         assertTrue(dataDifferences.size() == 11);
+        assertTrue(tableDataComparer.getMasterTotalRetrievedRows() == 19);
+        assertTrue(tableDataComparer.getSlaveTotalRetrievedRows() == 20);
     }
 }
