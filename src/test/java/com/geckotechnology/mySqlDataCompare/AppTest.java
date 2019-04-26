@@ -84,6 +84,7 @@ public class AppTest extends TestCase
 		assertEquals(schemaDifferences.size(), 27);
         
 		ArrayList<Table> tablesReadyToBeDataAnalyzed = mySQLSchemaComparer.getMasterTablesReadyToBeDataAnalyzed();
+		assertEquals(tablesReadyToBeDataAnalyzed.size(), 4);
 		MySQLTableDataComparer tableDataComparer = new MySQLTableDataComparer(masterSchemaReader, slaveSchemaReader);
 		for(Table table:tablesReadyToBeDataAnalyzed)
 			tableDataComparer.compareTable(table);

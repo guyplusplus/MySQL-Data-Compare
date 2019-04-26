@@ -56,7 +56,7 @@ public class App
 				System.out.println("Comparing Database Schema Data MASTER with Slave #" + i);
 				ArrayList<Table> tablesReadyToBeDataAnalyzed = mySQLSchemaComparer.getMasterTablesReadyToBeDataAnalyzed();
 				//printing table names to be analyzed
-				System.out.print("In scope tables: ");
+				System.out.print("In-scope tables for comparison: " + tablesReadyToBeDataAnalyzed.size() + ". Table names: ");
 				for(Table table:tablesReadyToBeDataAnalyzed) {
 					System.out.print(table.getTableName());		
 					System.out.print(" ");

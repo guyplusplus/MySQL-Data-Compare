@@ -59,7 +59,7 @@ Comparing Database Schema Metadata MASTER with Slave #1
     WARNING object:tab5.sometext2, differenceType:COLUMN_DIFFERENT_ORDINAL_POSITION, note:master:3 v.s. slave:1
     WARNING object:tab5.uid, differenceType:COLUMN_DIFFERENT_ORDINAL_POSITION, note:master:1 v.s. slave:3
 Comparing Database Schema Data MASTER with Slave #1
-In scope tables: tab1 tab2 tab3 tab5 
+In-scope tables for comparison: 4. Table names: tab1 tab2 tab3 tab5 
     ERROR object:tab1, differenceType:DATA_ROW_DIFFERENT_MD5, note:(uid)=(3)
     ERROR object:tab1, differenceType:DATA_ROW_MISSING_IN_SLAVE_TABLE, note:(uid)=(5)
     ERROR object:tab1, differenceType:DATA_ROW_DIFFERENT_MD5, note:(uid)=(7)
