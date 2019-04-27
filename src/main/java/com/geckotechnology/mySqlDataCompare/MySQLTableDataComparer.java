@@ -68,6 +68,16 @@ public class MySQLTableDataComparer {
 									pkColumnsTuple + "=("+ removedSlaveOneRaw.getPk() + ")"));
 						}
 					}
+					//remove all master rows if required
+					if(masterRows.size() > 0) {
+						for(OneRow unmatchedMasterOneRow:masterRows) {
+							dataDifferences.add(new SchemaDifference(Criticality.ERROR,
+									table.getTableName(),
+									DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE,
+									pkColumnsTuple + "=("+ unmatchedMasterOneRow.getPk() + ")"));			
+						}
+						masterRows = new ArrayList<OneRow>();
+					}
 				}
 				else {
 					//no matching PK, so add to masterRows
@@ -103,6 +113,16 @@ public class MySQLTableDataComparer {
 									pkColumnsTuple + "=("+ removedMasterOneRaw.getPk() + ")"));
 						}
 					}
+					//remove all slave rows if required
+					if(slaveRows.size() > 0) {
+						for(OneRow unmatchedSlaveOneRow:slaveRows) {
+							dataDifferences.add(new SchemaDifference(Criticality.ERROR,
+									table.getTableName(),
+									DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE,
+									pkColumnsTuple + "=("+ unmatchedSlaveOneRow.getPk() + ")"));			
+						}
+						slaveRows = new ArrayList<OneRow>();
+					}
 				}
 				else {
 					//no matching PK, so add to slaveRows
@@ -115,18 +135,18 @@ public class MySQLTableDataComparer {
 		}
 	
 		//rows not found in slave table
-		for(OneRow masterOneRow:masterRows) {
+		for(OneRow unmatchedMasterOneRow:masterRows) {
 			dataDifferences.add(new SchemaDifference(Criticality.ERROR,
 					table.getTableName(),
 					DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE,
-					pkColumnsTuple + "=("+ masterOneRow.getPk() + ")"));			
+					pkColumnsTuple + "=("+ unmatchedMasterOneRow.getPk() + ")"));			
 		}
 		//rows not found in master table
-		for(OneRow slaveOneRow:slaveRows) {
+		for(OneRow unmatchedSlaveOneRow:slaveRows) {
 			dataDifferences.add(new SchemaDifference(Criticality.ERROR,
 					table.getTableName(),
 					DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE,
-					pkColumnsTuple + "=("+ slaveOneRow.getPk() + ")"));			
+					pkColumnsTuple + "=("+ unmatchedSlaveOneRow.getPk() + ")"));			
 		}
 		slaveResultSet.close();
 		slaveStatement.close();
