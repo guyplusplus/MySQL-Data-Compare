@@ -76,7 +76,7 @@ public class MySQLTableDataComparer {
 		slaveResultSet.close();
 		slaveStatement.close();
 		masterResultSet.close();
-		masterStatement.close();		
+		masterStatement.close();
 	}
 	
 	private void processOneRow(Table table, String pkColumnsTuple, boolean isSourceMaster,
