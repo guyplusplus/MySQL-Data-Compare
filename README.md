@@ -12,6 +12,8 @@ The tool compares md5 of the row, simply speaking `select concat(pk1, pk2) PK, m
 
 The tool being optimized for tables very similar in content, it retrieves 1 row alternatively from master then slave table. As data is sorted by PK, it keeps a sorted list of differences (pk and md5 value) in memory. As soon as there is a match, any value lower than the match pair is immediately reported and removed from memory. Memory footprint shall then remain small.
 
+In the case the tool finds more than N rows (N=100 by default) different, the tool proceeds to analyze the next table.
+
 ## Build and Test
 
 Build only requires Maven and Java 7.

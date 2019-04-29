@@ -10,6 +10,8 @@ import com.geckotechnology.mySqlDataCompare.SchemaDifference.DifferenceType;
 
 public class MySQLTableDataComparer {
 	
+	private static final int MAX_DIFFERENCES_PER_TABLE = 100;
+	
 	private ArrayList<SchemaDifference> dataDifferences = new ArrayList<SchemaDifference>();
 	private MySQLSchemaRetriever masterSchemaReader;
 	private MySQLSchemaRetriever slaveSchemaReader;
@@ -41,6 +43,7 @@ public class MySQLTableDataComparer {
 		ArrayList<OneRow> unmatchedSlaveRows = new ArrayList<OneRow>();
 		boolean hasMasterResultSetNext = true;
 		boolean hasSlaveResultSetNext = true;
+		int dataDifferencesSizeAtStart = dataDifferences.size();
 		
 		while(hasMasterResultSetNext && hasSlaveResultSetNext) {
 			//Get 1 row from master DB
@@ -57,6 +60,27 @@ public class MySQLTableDataComparer {
 			}
 			else
 				hasSlaveResultSetNext = false;
+			//check now there are not too many differences
+			if((dataDifferences.size() - dataDifferencesSizeAtStart) > MAX_DIFFERENCES_PER_TABLE) {
+				dataDifferences.add(new SchemaDifference(Criticality.ERROR,
+						table.getTableName(),
+						DifferenceType.DATA_TOO_MANY_DIFFERENCES,
+						"max rows:" + MAX_DIFFERENCES_PER_TABLE
+						));			
+				break;
+			}
+			if(unmatchedMasterRows.size() > MAX_DIFFERENCES_PER_TABLE ||
+					unmatchedSlaveRows.size() > MAX_DIFFERENCES_PER_TABLE) {
+				dataDifferences.add(new SchemaDifference(Criticality.ERROR,
+						table.getTableName(),
+						DifferenceType.DATA_TOO_MANY_UNMATCHED_ROWS,
+						"max rows:" + MAX_DIFFERENCES_PER_TABLE
+						));
+				//clearing the rows as it is not sure they are unmatched
+				unmatchedMasterRows.clear();
+				unmatchedSlaveRows.clear();
+				break;
+			}
 		}
 	
 		//rows not found in slave table
