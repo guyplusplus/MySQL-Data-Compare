@@ -1,6 +1,7 @@
 package com.geckotechnology.mySqlDataCompare;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -36,102 +37,87 @@ public class MySQLTableDataComparer {
 		ResultSet masterResultSet = masterStatement.executeQuery(selectSQL.toString());
 		Statement slaveStatement = slaveSchemaReader.createStatement();
 		ResultSet slaveResultSet = slaveStatement.executeQuery(selectSQL.toString());
-		ArrayList<OneRow> masterRows = new ArrayList<OneRow>();
-		ArrayList<OneRow> slaveRows = new ArrayList<OneRow>();
+		ArrayList<OneRow> unmatchedMasterRows = new ArrayList<OneRow>();
+		ArrayList<OneRow> unmatchedSlaveRows = new ArrayList<OneRow>();
 		boolean hasMasterResultSetNext = true;
 		boolean hasSlaveResultSetNext = true;
+		
 		while(hasMasterResultSetNext && hasSlaveResultSetNext) {
-			
 			//Get 1 row from master DB
 			if(hasMasterResultSetNext && masterResultSet.next()) {
-				OneRow masterOneRow = new OneRow(masterResultSet.getString(1), masterResultSet.getString(2));
 				masterTotalRetrievedRows++;
-				int slaveRowIndex = slaveRows.indexOf(masterOneRow);
-				if(slaveRowIndex != -1) {
-					//slave row matching PK has been found
-					OneRow slaveOneRow = slaveRows.get(slaveRowIndex);
-					if(!slaveOneRow.getMd5().equals(masterOneRow.getMd5())) {
-						//PK are same but the MD5 are different
-						dataDifferences.add(new SchemaDifference(Criticality.ERROR,
-								table.getTableName(),
-								DifferenceType.DATA_ROW_DIFFERENT_MD5,
-								pkColumnsTuple + "=("+ masterOneRow.getPk() + ")"));
-					}
-					slaveRows.remove(slaveRowIndex);
-					if(slaveRowIndex != 0) {
-						//we found older records, meaning it was not matched
-						for(int i = 0; i<slaveRowIndex; i++) {
-							OneRow removedSlaveOneRaw = slaveRows.remove(0);
-							dataDifferences.add(new SchemaDifference(Criticality.ERROR,
-									table.getTableName(),
-									DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE,
-									pkColumnsTuple + "=("+ removedSlaveOneRaw.getPk() + ")"));
-						}
-					}
-				}
-				else {
-					//no matching PK, so add to masterRows
-					masterRows.add(masterOneRow);
-				}
+				processOneRow(table, pkColumnsTuple, true, masterResultSet, unmatchedMasterRows, unmatchedSlaveRows);
 			}
 			else
 				hasMasterResultSetNext = false;
-			
 			//Get 1 row from slave DB
 			if(hasSlaveResultSetNext && slaveResultSet.next()) {
-				OneRow slaveOneRow = new OneRow(slaveResultSet.getString(1), slaveResultSet.getString(2));
 				slaveTotalRetrievedRows++;
-				int masterRowIndex = masterRows.indexOf(slaveOneRow);
-				if(masterRowIndex != -1) {
-					//slave row matching PK has been found
-					OneRow masterOneRow = masterRows.get(masterRowIndex);
-					if(!slaveOneRow.getMd5().equals(masterOneRow.getMd5())) {
-						//PK are same but the MD5 are different
-						dataDifferences.add(new SchemaDifference(Criticality.ERROR,
-								table.getTableName(),
-								DifferenceType.DATA_ROW_DIFFERENT_MD5,
-								pkColumnsTuple + "=("+ masterOneRow.getPk() + ")"));
-					}
-					masterRows.remove(masterRowIndex);
-					if(masterRowIndex != 0) {
-						//we found older records, meaning it was not matched
-						for(int i = 0; i<masterRowIndex; i++) {
-							OneRow removedMasterOneRaw = masterRows.remove(0);
-							dataDifferences.add(new SchemaDifference(Criticality.ERROR,
-									table.getTableName(),
-									DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE,
-									pkColumnsTuple + "=("+ removedMasterOneRaw.getPk() + ")"));
-						}
-					}
-				}
-				else {
-					//no matching PK, so add to slaveRows
-					slaveRows.add(slaveOneRow);
-				}
+				processOneRow(table, pkColumnsTuple, false, slaveResultSet, unmatchedSlaveRows, unmatchedMasterRows);
 			}
 			else
 				hasSlaveResultSetNext = false;
-
 		}
 	
 		//rows not found in slave table
-		for(OneRow masterOneRow:masterRows) {
+		for(OneRow unmatchedMasterOneRow:unmatchedMasterRows) {
 			dataDifferences.add(new SchemaDifference(Criticality.ERROR,
 					table.getTableName(),
 					DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE,
-					pkColumnsTuple + "=("+ masterOneRow.getPk() + ")"));			
+					pkColumnsTuple + "=("+ unmatchedMasterOneRow.getPk() + ")"));			
 		}
 		//rows not found in master table
-		for(OneRow slaveOneRow:slaveRows) {
+		for(OneRow unmatchedSlaveOneRow:unmatchedSlaveRows) {
 			dataDifferences.add(new SchemaDifference(Criticality.ERROR,
 					table.getTableName(),
 					DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE,
-					pkColumnsTuple + "=("+ slaveOneRow.getPk() + ")"));			
+					pkColumnsTuple + "=("+ unmatchedSlaveOneRow.getPk() + ")"));			
 		}
 		slaveResultSet.close();
 		slaveStatement.close();
 		masterResultSet.close();
 		masterStatement.close();		
+	}
+	
+	private void processOneRow(Table table, String pkColumnsTuple, boolean isSourceMaster,
+			ResultSet sourceResultSet, ArrayList<OneRow> unmatchedSourceRows, ArrayList<OneRow> unmatchedTargetRows) throws SQLException {
+		OneRow sourceOneRow = new OneRow(sourceResultSet.getString(1), sourceResultSet.getString(2));
+		int targetRowIndex = unmatchedTargetRows.indexOf(sourceOneRow);
+		if(targetRowIndex != -1) {
+			//target row matching PK has been found, it can be removed immediately from targetRows
+			OneRow targetOneRow = unmatchedTargetRows.remove(targetRowIndex);
+			if(!targetOneRow.getMd5().equals(sourceOneRow.getMd5())) {
+				//PK are same but the MD5 are different
+				dataDifferences.add(new SchemaDifference(Criticality.ERROR,
+						table.getTableName(),
+						DifferenceType.DATA_ROW_DIFFERENT_MD5,
+						pkColumnsTuple + "=("+ sourceOneRow.getPk() + ")"));
+			}
+			if(targetRowIndex != 0) {
+				//we found older records, meaning it was not matched
+				for(int i = 0; i<targetRowIndex; i++) {
+					OneRow removedTargetOneRaw = unmatchedTargetRows.remove(0);
+					dataDifferences.add(new SchemaDifference(Criticality.ERROR,
+							table.getTableName(),
+							(isSourceMaster ? DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE : DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE),
+							pkColumnsTuple + "=("+ removedTargetOneRaw.getPk() + ")"));
+				}
+			}
+			//remove all source rows if required
+			if(unmatchedSourceRows.size() > 0) {
+				for(OneRow unmatchedSourceOneRow:unmatchedSourceRows) {
+					dataDifferences.add(new SchemaDifference(Criticality.ERROR,
+							table.getTableName(),
+							(isSourceMaster ? DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE : DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE),
+							pkColumnsTuple + "=("+ unmatchedSourceOneRow.getPk() + ")"));			
+				}
+				unmatchedSourceRows.clear();
+			}
+		}
+		else {
+			//no matching PK, so add to source rows
+			unmatchedSourceRows.add(sourceOneRow);
+		}		
 	}
 
 	public int calculateCriticalityCount(SchemaDifference.Criticality criticality) {
@@ -151,6 +137,5 @@ public class MySQLTableDataComparer {
 			schemaDifference.printDetails();
 		}
 	}
-
 
 }
