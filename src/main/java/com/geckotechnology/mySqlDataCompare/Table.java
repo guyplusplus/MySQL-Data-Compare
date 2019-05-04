@@ -86,17 +86,17 @@ public class Table {
 	
 	public StringBuilder createSQLToGetAllRows() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("select ");
+		sb.append("select sql_no_cache ");
 		sb.append(buildSequence(primaryKey.getColumnsSortedByPrimaryKeyOrdinalPosition(),
 				"concat(", ")",
 				"", "", // no need coalesce since it is PK
 				", '" + COLUMN_SEPARATOR + "', "));
-		sb.append(" PK ,");
+		sb.append(" as PK ,");
 		sb.append(buildSequence(getColumnsSortedByColumnName(),
 				"md5(concat(", "))",
 				"coalesce(", ",'" + NULL_VALUE + "')",
 				", '" + COLUMN_SEPARATOR + "', "));
-		sb.append(" MD5 from ");
+		sb.append(" as MD5 from ");
 		sb.append(getTableName());
 		sb.append(" order by ");
 		sb.append(buildSequence(primaryKey.getColumnsSortedByPrimaryKeyOrdinalPosition(),
