@@ -24,7 +24,8 @@ public class MySQLSchemaRetriever {
 		Properties info = new Properties();
 		info.put ("defaultFetchSize", Integer.toString(SELECT_FETCH_SIZE));
 		info.put ("useCursorFetch", "true");
-		conn = DriverManager.getConnection(url, info);		
+		conn = DriverManager.getConnection(url, info);
+		conn.setAutoCommit(true);
 	}
 	
 	public void closeConnection() {
