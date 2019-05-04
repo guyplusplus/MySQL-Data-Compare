@@ -45,7 +45,7 @@ public class MySQLTableDataComparer {
 		boolean hasSlaveResultSetNext = true;
 		int dataDifferencesSizeAtStart = dataDifferences.size();
 		
-		while(hasMasterResultSetNext && hasSlaveResultSetNext) {
+		while(hasMasterResultSetNext || hasSlaveResultSetNext) {
 			//Get 1 row from master DB
 			if(hasMasterResultSetNext && masterResultSet.next()) {
 				masterTotalRetrievedRows++;
