@@ -28,6 +28,8 @@ Simply issue the command `java -jar MySQLDataCompare-1.0.jar masterSchemaURL sla
 
 Here is a sample output from the test cases.
 
+Running on a i5 laptop with SSD and MySQL 8, comparison took less than 1 minute for 7.5 million rows.
+
 ```
 Loading Database Schema Metadata MASTER
 
@@ -61,20 +63,23 @@ Comparing Database Schema Metadata MASTER with Slave #1
     WARNING object:tab5.sometext2, differenceType:COLUMN_DIFFERENT_ORDINAL_POSITION, note:master:3 v.s. slave:1
     WARNING object:tab5.uid, differenceType:COLUMN_DIFFERENT_ORDINAL_POSITION, note:master:1 v.s. slave:3
 Comparing Database Schema Data MASTER with Slave #1
-In-scope tables for comparison: 4. Table names: tab1 tab2 tab3 tab5 
+In scope tables for comparison: 5. Table names: bigtable tab1 tab2 tab3 tab5 
+    ERROR object:bigtable, differenceType:DATA_ROW_EXCESS_IN_SLAVE_TABLE, note:(uid)=(300000001)
+    ERROR object:bigtable, differenceType:DATA_ROW_DIFFERENT_MD5, note:(uid)=(500000001)
+    ERROR object:bigtable, differenceType:DATA_ROW_MISSING_IN_SLAVE_TABLE, note:(uid)=(700000001)
     ERROR object:tab1, differenceType:DATA_ROW_DIFFERENT_MD5, note:(uid)=(3)
+    ERROR object:tab1, differenceType:DATA_ROW_EXCESS_IN_SLAVE_TABLE, note:(uid)=(2)
     ERROR object:tab1, differenceType:DATA_ROW_MISSING_IN_SLAVE_TABLE, note:(uid)=(5)
     ERROR object:tab1, differenceType:DATA_ROW_DIFFERENT_MD5, note:(uid)=(7)
-    ERROR object:tab1, differenceType:DATA_ROW_EXCESS_IN_SLAVE_TABLE, note:(uid)=(2)
-    ERROR object:tab2, differenceType:DATA_ROW_MISSING_IN_SLAVE_TABLE, note:(uid)=(5)
     ERROR object:tab2, differenceType:DATA_ROW_EXCESS_IN_SLAVE_TABLE, note:(uid)=(2)
+    ERROR object:tab2, differenceType:DATA_ROW_MISSING_IN_SLAVE_TABLE, note:(uid)=(5)
     ERROR object:tab3, differenceType:DATA_ROW_DIFFERENT_MD5, note:(uid,sometext2)=(3,c2)
     ERROR object:tab3, differenceType:DATA_ROW_DIFFERENT_MD5, note:(uid,sometext2)=(5,d2)
     ERROR object:tab3, differenceType:DATA_ROW_MISSING_IN_SLAVE_TABLE, note:(uid,sometext2)=(4,d2)
     ERROR object:tab3, differenceType:DATA_ROW_EXCESS_IN_SLAVE_TABLE, note:(uid,sometext2)=(4,d3)
     ERROR object:tab3, differenceType:DATA_ROW_EXCESS_IN_SLAVE_TABLE, note:(uid,sometext2)=(6,e2)
 Comparing Database Schema MASTER with Slave #1 complete
-Duration(ms): 53. Total rows retrieved from master: 19, slave: 20
+Duration(ms): 51896. Total rows retrieved from master: 7466897, slave: 7466898
 
-Job Done. Count Summary warningCount:14, errorCount:24
+Job Done. Count Summary warningCount:14, errorCount:27
 ```
