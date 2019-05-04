@@ -84,6 +84,10 @@ public class Table {
 				COLUMN_SEPARATOR);
 	}
 	
+	/**
+	 * @TODO optimize by removing coalesce when a column is not 'nullable' for both tables to be compared
+	 * @return SQL statement
+	 */
 	public StringBuilder createSQLToGetAllRows() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select sql_no_cache ");
