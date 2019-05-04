@@ -263,7 +263,7 @@ insert into schema_b.tab5 (uid,sometext1,sometext2) values (2, 'b1', 'b2');
 insert into schema_b.tab5 (uid,sometext1,sometext2) values (1, 'a1', 'a2');
 
 #######
-# Big Table with 128 rows
+# Big Table with 1,000,000 rows
 
 create table schema_A.bigtable(
    uid INT,
@@ -271,24 +271,15 @@ create table schema_A.bigtable(
    PRIMARY KEY ( uid )
 );
 
-INSERT INTO schema_A.bigtable ( uid, rndint ) VALUES ( 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823));
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
-INSERT IGNORE INTO schema_A.bigtable ( uid, rndint ) select 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) from schema_A.bigtable;
+INSERT IGNORE INTO schema_A.bigtable ( uid, rndint )
+SELECT 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) 
+FROM 
+(select 0 as i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) as t1,
+(select 0 as i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) as t2,
+(select 0 as i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) as t3,
+(select 0 as i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) as t4,
+(select 0 as i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) as t5,
+(select 0 as i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) as t6;
 
 create table schema_B.bigtable(
    uid INT,
@@ -296,12 +287,12 @@ create table schema_B.bigtable(
    PRIMARY KEY ( uid )
 );
 
-INSERT IGNORE INTO schema_B.bigtable ( uid, rndint ) select uid, rndint from schema_A.bigtable;
+INSERT IGNORE INTO schema_B.bigtable ( uid, rndint ) select sql_no_cache uid, rndint from schema_A.bigtable;
 
-INSERT INTO schema_A.bigtable ( uid, rndint ) VALUES ( 500000000, 1234);
-INSERT INTO schema_B.bigtable ( uid, rndint ) VALUES ( 500000000, 4567);
-INSERT INTO schema_A.bigtable ( uid, rndint ) VALUES ( 700000000, 1234);
-INSERT INTO schema_B.bigtable ( uid, rndint ) VALUES ( 300000000, 4567);
+INSERT INTO schema_A.bigtable ( uid, rndint ) VALUES ( 500000001, 1234);
+INSERT INTO schema_B.bigtable ( uid, rndint ) VALUES ( 500000001, 4567);
+INSERT INTO schema_A.bigtable ( uid, rndint ) VALUES ( 700000001, 1234);
+INSERT INTO schema_B.bigtable ( uid, rndint ) VALUES ( 300000001, 4567);
 
 #######
 # View to make sure it has no impact
