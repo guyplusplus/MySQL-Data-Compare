@@ -84,7 +84,7 @@ public class AppTest extends TestCase
 		assertEquals(schemaDifferences.size(), 27);
         
 		ArrayList<Table> tablesReadyToBeDataAnalyzed = mySQLSchemaComparer.getMasterTablesReadyToBeDataAnalyzed();
-		assertEquals(tablesReadyToBeDataAnalyzed.size(), 5);
+		assertEquals(tablesReadyToBeDataAnalyzed.size(), 6);
 		MySQLTableDataComparer tableDataComparer = new MySQLTableDataComparer(masterSchemaReader, slaveSchemaReader);
 		for(Table table:tablesReadyToBeDataAnalyzed)
 			tableDataComparer.compareTable(table);
@@ -100,11 +100,12 @@ public class AppTest extends TestCase
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE, "(uid,sometext2)=(4,d2)")) >= 0);
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid,sometext2)=(4,d3)")) >= 0);
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid,sometext2)=(6,e2)")) >= 0);
-
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "bigtable", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid)=(300000001)")) >= 0);
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "bigtable", DifferenceType.DATA_ROW_DIFFERENT_MD5, "(uid)=(500000001)")) >= 0);
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "bigtable", DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE, "(uid)=(700000001)")) >= 0);
-		assertEquals(dataDifferences.size(), 14);
+		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "bigdiff", DifferenceType.DATA_TOO_MANY_UNMATCHED_ROWS, "max rows:100")) >= 0);
+
+		assertEquals(dataDifferences.size(), 15);
         assertTrue(tableDataComparer.getMasterTotalRetrievedRows() > 900000);
         assertTrue(tableDataComparer.getSlaveTotalRetrievedRows() > 900000);
     }

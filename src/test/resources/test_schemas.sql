@@ -295,6 +295,28 @@ INSERT INTO schema_A.bigtable ( uid, rndint ) VALUES ( 700000001, 1234);
 INSERT INTO schema_B.bigtable ( uid, rndint ) VALUES ( 300000001, 4567);
 
 #######
+# Big diff Table with 1,000 rows
+
+create table schema_A.bigdiff(
+   uid INT,
+   rndint INT,
+   PRIMARY KEY ( uid )
+);
+
+INSERT IGNORE INTO schema_A.bigdiff ( uid, rndint )
+SELECT 2 * round(rand() * 1073741823), 2 * round(rand() * 1073741823) 
+FROM 
+(select 0 as i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) as t1,
+(select 0 as i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) as t2,
+(select 0 as i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) as t3;
+
+create table schema_B.bigdiff(
+   uid INT,
+   rndint INT,
+   PRIMARY KEY ( uid )
+);
+
+#######
 # View to make sure it has no impact
 
 create view schema_a.myview1 as select * from schema_a.tab3;
