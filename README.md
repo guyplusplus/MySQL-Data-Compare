@@ -8,7 +8,7 @@ It was developed to compare MySQL replicas, in particular for a MySQL InnoDB clu
 
 The tool first retrieves schema information and ensures that tables can be compared. Two tables can be compared when they carry the same columns and the same primary keys. The tool issues warning when columns or primary keys are different type or different ordinal position.
 
-The tool compares md5 of the row, simply speaking `select concat(pk1, pk2) PK, md5(concat(pk1, pk2, coalesce(c1, 'null'), coalesce(c2, 'null'), ...)) MD5 from mytable order by pk1, pk2`. If some primary keys are missing on either master or slave database, or md5 value is not matching, the tool reports the difference, showing the primary keys.
+The tool compares md5 of the row, simply speaking `select concat(pk1, ',', pk2) PK, md5(concat(pk1, ',', pk2, ',', coalesce(c1, 'null'), ',', coalesce(c2, 'null'), ...)) MD5 from mytable order by pk1, pk2`. If some primary keys are missing on either master or slave database, or md5 value is not matching, the tool reports the difference, showing the primary keys.
 
 The tool being optimized for tables very similar in content, it retrieves 1 row alternatively from master then slave table. As data is sorted by PK, it keeps a sorted list of differences (pk and md5 value) in memory. As soon as there is a match, any value lower than the match pair is immediately reported and removed from memory. Memory footprint shall then remain small.
 
@@ -22,7 +22,7 @@ For the automated test suite, install MySQL 5 or 8 on your local machine (127.0.
 
 ## Run
 
-First download `mysql-connector-java-8.0.13.jar` [here](https://dev.mysql.com/downloads/connector/j/) and place this file in the path of MySQLDataCompare jar file. Have also JRE 1.7 or higher in the path.
+First download `mysql-connector-java-8.0.16.jar` [here](https://dev.mysql.com/downloads/connector/j/) and place this file in the path of MySQLDataCompare jar file. Have also JRE 1.7 or higher in the path.
 
 Simply issue the command `java -jar MySQLDataCompare-1.0.jar masterSchemaURL slaveSchemaURL1 [slaveSchemaURL2]`.
 
@@ -31,6 +31,7 @@ Here is a sample output from the test cases.
 Running on a i5 laptop with SSD and MySQL 8, comparison took less than 8MB heap size and 1 minute for 7.5 million rows nearly similar schemas.
 
 ```
+D:\Tools\MySQL-Data-Compare>java -jar MySQLDataCompare-1.0.jar "jdbc:mysql://localhost:3306/schema_a?user=usertestA&password=password" "jdbc:mysql://localhost:3306/schema_b?user=usertestB&password=password"
 Loading Database Schema Metadata MASTER
 
 Loading Database Schema Metadata Slave #1
@@ -63,7 +64,8 @@ Comparing Database Schema Metadata MASTER with Slave #1
     WARNING object:tab5.sometext2, differenceType:COLUMN_DIFFERENT_ORDINAL_POSITION, note:master:3 v.s. slave:1
     WARNING object:tab5.uid, differenceType:COLUMN_DIFFERENT_ORDINAL_POSITION, note:master:1 v.s. slave:3
 Comparing Database Schema Data MASTER with Slave #1
-In scope tables for comparison: 5. Table names: bigtable tab1 tab2 tab3 tab5 
+In scope tables for comparison: 6. Table names: bigdiff bigtable tab1 tab2 tab3 tab5 
+    ERROR object:bigdiff, differenceType:DATA_TOO_MANY_UNMATCHED_ROWS, note:max rows:100
     ERROR object:bigtable, differenceType:DATA_ROW_EXCESS_IN_SLAVE_TABLE, note:(uid)=(300000001)
     ERROR object:bigtable, differenceType:DATA_ROW_DIFFERENT_MD5, note:(uid)=(500000001)
     ERROR object:bigtable, differenceType:DATA_ROW_MISSING_IN_SLAVE_TABLE, note:(uid)=(700000001)
@@ -79,7 +81,8 @@ In scope tables for comparison: 5. Table names: bigtable tab1 tab2 tab3 tab5
     ERROR object:tab3, differenceType:DATA_ROW_EXCESS_IN_SLAVE_TABLE, note:(uid,sometext2)=(4,d3)
     ERROR object:tab3, differenceType:DATA_ROW_EXCESS_IN_SLAVE_TABLE, note:(uid,sometext2)=(6,e2)
 Comparing Database Schema MASTER with Slave #1 complete
-Duration(ms): 51896. Total rows retrieved from master: 7466897, slave: 7466898
+Duration(ms): 51792. Total rows retrieved from master: 7466998, slave: 7466898
 
-Job Done. Count Summary warningCount:14, errorCount:27
+Job Done. Count Summary warningCount:14, errorCount:28
+D:\Tools\MySQL-Data-Compare>
 ```
