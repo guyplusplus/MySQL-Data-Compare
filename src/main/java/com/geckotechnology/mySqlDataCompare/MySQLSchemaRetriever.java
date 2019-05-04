@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Properties;
 
 public class MySQLSchemaRetriever {
 	
@@ -20,7 +21,10 @@ public class MySQLSchemaRetriever {
 	}
 	
 	public void openConnection() throws Exception {
-		conn = DriverManager.getConnection(url);		
+		Properties info = new Properties();
+		info.put ("defaultFetchSize", Integer.toString(SELECT_FETCH_SIZE));
+		info.put ("useCursorFetch", "true");
+		conn = DriverManager.getConnection(url, info);		
 	}
 	
 	public void closeConnection() {
@@ -36,7 +40,6 @@ public class MySQLSchemaRetriever {
 	    		ResultSet.TYPE_FORWARD_ONLY,
 	    	    ResultSet.CONCUR_READ_ONLY,
 	    	    ResultSet.CLOSE_CURSORS_AT_COMMIT);
-	    stmt.setFetchSize(SELECT_FETCH_SIZE);
 	    return stmt;
 	}
 	
