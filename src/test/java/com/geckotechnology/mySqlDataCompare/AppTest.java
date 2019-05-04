@@ -101,11 +101,11 @@ public class AppTest extends TestCase
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid,sometext2)=(4,d3)")) >= 0);
 		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "tab3", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid,sometext2)=(6,e2)")) >= 0);
 
-		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "bigtable", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid)=(300000000)")) >= 0);
-		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "bigtable", DifferenceType.DATA_ROW_DIFFERENT_MD5, "(uid)=(500000000)")) >= 0);
-		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "bigtable", DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE, "(uid)=(700000000)")) >= 0);
+		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "bigtable", DifferenceType.DATA_ROW_EXCESS_IN_SLAVE_TABLE, "(uid)=(300000001)")) >= 0);
+		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "bigtable", DifferenceType.DATA_ROW_DIFFERENT_MD5, "(uid)=(500000001)")) >= 0);
+		assertTrue(dataDifferences.indexOf(new SchemaDifference(Criticality.ERROR, "bigtable", DifferenceType.DATA_ROW_MISSING_IN_SLAVE_TABLE, "(uid)=(700000001)")) >= 0);
 		assertEquals(dataDifferences.size(), 14);
-        assertTrue(tableDataComparer.getMasterTotalRetrievedRows() > 100000);
-        assertTrue(tableDataComparer.getSlaveTotalRetrievedRows() > 100000);
+        assertTrue(tableDataComparer.getMasterTotalRetrievedRows() > 900000);
+        assertTrue(tableDataComparer.getSlaveTotalRetrievedRows() > 900000);
     }
 }
