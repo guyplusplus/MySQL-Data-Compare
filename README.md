@@ -28,7 +28,7 @@ Simply issue the command `java -jar MySQLDataCompare-1.0.jar masterSchemaURL sla
 
 Here is a sample output from the test cases.
 
-Running on a i5 laptop with SSD and MySQL 8, comparison took less than 1 minute for 7.5 million rows.
+Running on a i5 laptop with SSD and MySQL 8, comparison took less than 8MB heap size and 1 minute for 7.5 million rows nearly similar schemas.
 
 ```
 Loading Database Schema Metadata MASTER
