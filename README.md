@@ -86,3 +86,7 @@ Duration(ms): 51792. Total rows retrieved from master: 7466998, slave: 7466898
 Job Done. Count Summary warningCount:14, errorCount:28
 D:\Tools\MySQL-Data-Compare>
 ```
+
+## Return Code
+
+The tool returns 0 if no error, even if there is any warning. 1 otherwise.
