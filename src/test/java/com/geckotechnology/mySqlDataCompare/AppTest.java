@@ -11,6 +11,7 @@ import junit.framework.TestSuite;
 
 public class AppTest extends TestCase
 {
+	private static final String MASTER_URL_NO_SCHEMA = "jdbc:mysql://localhost:3306?user=usertestA&password=password";
 	private static final String MASTER_URL = "jdbc:mysql://localhost:3306/schema_a?user=usertestA&password=password";
 	private static final String SLAVE_URL = "jdbc:mysql://localhost:3306/schema_b?user=usertestB&password=password";
 
@@ -109,4 +110,21 @@ public class AppTest extends TestCase
         assertTrue(tableDataComparer.getMasterTotalRetrievedRows() > 900000);
         assertTrue(tableDataComparer.getSlaveTotalRetrievedRows() > 900000);
     }
+    
+    public void testURLWithoutSchema() {
+    	MySQLSchemaRetriever retriever = null;
+		try {
+			retriever = new MySQLSchemaRetriever(MASTER_URL_NO_SCHEMA);
+			retriever.openConnection();
+			retriever.retrieveMetaData();
+			fail("MySQLSchemaRetriever should fail when there is no schema specified in URL");
+		} catch (Exception e) {
+			assertEquals(e.getMessage(), "Schema not defined in URL");
+			try {
+				retriever.closeConnection();
+			} catch (Exception e1) {
+			}
+		}
+    }
+
 }
